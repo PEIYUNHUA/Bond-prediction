@@ -1,0 +1,8 @@
+选用指标,编号,参数数量,同参数下No
+"['SHERONG', 'GOVBOND', 'GKBOND', 'MID']",1,4,263
+"['USDI', 'GKBOND', 'MID', 'GOLD']",2,4,460
+"['R007', 'GOVBOND', 'CPI', 'GKBOND']",3,4,397
+"[ 'SHERONG', 'SHI', 'CPI', 'GKBOND', 'MID']",4,5,529
+"['SHI', 'GKBOND', 'MID']",5,3,208
+"['USA10', 'GKBOND', 'MID']",6,3,53
+"['R007', 'M1', 'GKBOND', 'GOLD']",7,4,423
