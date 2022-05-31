@@ -2,16 +2,20 @@ import pandas as pd
 
 from configs.CONFIGS import *
 
+from datetime import date
 
 def get_raw_data(data_io):
-    raw_data = pd.read_excel(data_io)
+    today = date.today()
+    today_str = today.strftime('%Y-%m-%d')
+    # raw_data = pd.read_excel('2022-05-27_raw_data.xlsx')
+    raw_data = pd.read_excel((today_str +'_'+data_io))
+    raw_data.columns = columns_list
     #   插值法处理na
-    col_list = raw_data.columns.values[1:29]
+    col_list = raw_data.columns.values[1:raw_data.shape[1]]
     for i in col_list:
         raw_data[i] = raw_data[i].fillna(raw_data[i].interpolate())
     # add ma & boll
-    bond_list = ['CHN1', 'CHN3', 'CHN5', 'CHN10', 'USA1', 'USA3', 'USA5', 'USA10']
-    ma_boll_data = get_ma_boll(bond_list, raw_data)
+    ma_boll_data = get_ma_boll(ma_boll_list, raw_data)
     return raw_data
 
 

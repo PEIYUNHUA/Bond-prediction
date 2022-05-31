@@ -19,9 +19,9 @@ def search_para(raw_data, best_comb_df):
                 starttime = time.time()
                 data = raw_data[best_lists]
                 data = (data.loc[data['date'].dt.year >= start_year]).reset_index().drop(columns='index')
-                # print(data.info())1820 460
-                train_data = data[:1820]
-                test_data = data[1820:]
+                data_len = int(len(data) * 0.8)
+                train_data = data[:data_len]
+                test_data = data[len(data) - data_len:]
                 y_test, y_test_predict, eva_mae, eva_mpea, eva_r2 = train_model(input_size, train_data, test_data, epochs, learning_rate)
                 endtime = time.time()
                 timecost = endtime-starttime

@@ -1,5 +1,6 @@
 from models.train_models import *
 from configs.CONFIGS import *
+import csv
 
 
 def gen_models(raw_data, best_model_df):
@@ -11,9 +12,9 @@ def gen_models(raw_data, best_model_df):
         input_size = len(list(set(target_list) ^ set(best_lists)))
         data = raw_data[best_lists]
         data = (data.loc[data['date'].dt.year >= start_year]).reset_index().drop(columns='index')
-        # print(data.info())1820 460
-        train_data = data[:1820]
-        test_data = data[1820:]
+        data_len = int(len(data)*0.8)
+        train_data = data[:data_len]
+        test_data = data[len(data)-data_len:]
         train_model_savings(i, input_size, train_data, test_data, epochs, learning_rate)
 
 
@@ -51,8 +52,13 @@ def gen_prediction(today_data, best_comb_df):
         x_feed_tensors_final = torch.reshape(x_feed_tensors,   (x_feed_tensors.shape[0], 1, x_feed_tensors.shape[1]))
         output = model(x_feed_tensors_final)
         fin_pre = output.data.detach().cpu().numpy()
-        fin_res = (fin_pre[-1].astype('float').tolist())[0]
+        fin_res = round((fin_pre[-1].astype('float').tolist())[0], 4)
         res_list.append(fin_res)
     average_res = np.mean(res_list)
     average_res = round(average_res, 4)
+    res_list.append(['avg', average_res])
+    # LOGS
+    with open(log_io, 'a', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(res_list)
     return res_list, average_res

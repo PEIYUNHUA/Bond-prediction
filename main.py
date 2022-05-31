@@ -17,9 +17,18 @@ import numpy as np
 import pandas as pd
 import re
 
+from WindPy import w
+from datetime import date
+import os
+import shutil
+
 if __name__ == '__main__':
     # TYPE 1 MODEL GENERATION
     # TYPE 2 PREDICTIONS GENERATION
+    # TYPE 3 COLLECT DATA
+    # TYPE 4 CLEAR RES & IMG
+    today = date.today()
+    today_str = today.strftime('%Y-%m-%d')
     TYPE = 2
 
     if TYPE == 1:
@@ -73,12 +82,41 @@ if __name__ == '__main__':
     elif TYPE == 2:
         # PREDICTIONS GENERATION
         try:
-            today_data = pre.get_raw_data(today_data_io)
+            today_data = pre.get_raw_data(pre.data_io)
             best_comb_df = pd.read_csv(best_parameter_output_io)
             res_list, average_res = gen_prediction(today_data, best_comb_df)
             print('Prediction Generation Success！result:{}, by{}'.format(average_res, res_list))
         except Exception as e:
             print('Prediction Generation Failed!', e)
 
+    elif TYPE == 3:
+        # COLLECT DATA
+        try:
+            w.start()  # 默认命令超时时间为120秒，如需设置超时时间可以加入waitTime参数，例如waitTime=60,即设置命令超时时间为60秒
+            error, data = w.wsd(index_list, "CLOSE", data_start, options="", usedf=True)
+            data.to_excel((today_str + '_' + data_io))
+            # w.isconnected() # 判断WindPy是否已经登录成功
+
+            # w.stop() # 当需要停止WindPy时，可以使用该命令
+            #           # 注： w.start不重复启动，若需要改变参数，如超时时间，用户可以使用w.stop命令先停止后再启动。
+            #           # 退出时，会自动执行w.stop()，一般用户并不需要执行w.stop
+            # w.wsd（codes, fields, beginTime, endTime, options）
+            print('Data Generation Success!')
+        except Exception as e:
+            print('Prediction Generation Failed!', e)
+
+    elif TYPE == 4:
+        # CLEAR ALL
+        try:
+            for i in filepaths:
+                filepath = i
+                if not os.path.exists(filepath):
+                    os.mkdir(filepath)
+                else:
+                    shutil.rmtree(filepath)
+                    os.mkdir(filepath)
+            print('CLEAR ALL Success!')
+        except Exception as e:
+            print('CLEAR ALL Failed!', e)
     else:
         print('TYPE error')

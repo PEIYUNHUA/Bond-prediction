@@ -32,9 +32,9 @@ def search_comb(raw_data, feature_comb_df):
         data = raw_data[feature_comb_df['feature_comb'][i]]
         # time cut
         data = (data.loc[data['date'].dt.year >= start_year]).reset_index().drop(columns='index')
-        # print(data.info())1820 460
-        train_data = data[:1820]
-        test_data = data[1820:]
+        data_len = int(len(data)*0.8)
+        train_data = data[:data_len]
+        test_data = data[len(data)-data_len:]
         y_test, y_test_predict, eva_mae, eva_mpea, eva_r2 = train_model(input_size, train_data, test_data, epochs, learning_rate)
 
         endtime = time.time()
