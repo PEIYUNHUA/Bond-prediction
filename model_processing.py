@@ -54,9 +54,16 @@ def gen_prediction(today_data, best_comb_df):
         fin_pre = output.data.detach().cpu().numpy()
         fin_res = round((fin_pre[-1].astype('float').tolist())[0], 4)
         res_list.append(fin_res)
+    latest_date = data.iloc[-1]['date']
+    latest_real = data.iloc[-1]['CHN10']
     average_res = np.mean(res_list)
     average_res = round(average_res, 4)
-    res_list.append(['avg', average_res])
+    res_list.append('avg')
+    res_list.append(average_res)
+    res_list.append('predicting_date')
+    res_list.append(latest_date)
+    res_list.append('last_real')
+    res_list.append(round(latest_real,4))
     # LOGS
     with open(log_io, 'a', newline='') as f:
         writer = csv.writer(f)

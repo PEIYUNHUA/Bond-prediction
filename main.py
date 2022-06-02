@@ -9,6 +9,7 @@ import evaluation
 from configs.CONFIGS import *
 from models.train_models import *
 from model_processing import *
+from wechat_processing import *
 
 from sklearn.preprocessing import StandardScaler
 from torch.autograd import Variable
@@ -27,9 +28,11 @@ if __name__ == '__main__':
     # TYPE 2 PREDICTIONS GENERATION
     # TYPE 3 COLLECT DATA
     # TYPE 4 CLEAR RES & IMG
+    # TYPE 5 SEND WECHAT
     today = date.today()
     today_str = today.strftime('%Y-%m-%d')
-    TYPE = 2
+    TYPE = 5
+    # loop_monitor()
 
     if TYPE == 1:
         # MODEL GENERATION
@@ -118,5 +121,15 @@ if __name__ == '__main__':
             print('CLEAR ALL Success!')
         except Exception as e:
             print('CLEAR ALL Failed!', e)
+
+    elif TYPE == 5:
+        # SEND WECHAT
+        # try:
+        # wx_warning()
+        loop_monitor()
+        # print('CLEAR ALL Success!')
+        # except Exception as e:
+        #     print('CLEAR ALL Failed!', e)
+
     else:
         print('TYPE error')
