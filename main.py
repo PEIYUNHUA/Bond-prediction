@@ -23,7 +23,7 @@ from datetime import date
 import os
 import shutil
 
-if __name__ == '__main__':
+def run_main(n):
     # TYPE 1 MODEL GENERATION
     # TYPE 2 PREDICTIONS GENERATION
     # TYPE 3 COLLECT DATA
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     # TYPE 5 SEND WECHAT
     today = date.today()
     today_str = today.strftime('%Y-%m-%d')
-    TYPE = 5
+    TYPE = n
     # loop_monitor()
 
     if TYPE == 1:
@@ -77,6 +77,17 @@ if __name__ == '__main__':
                 print('best_models generation Success!')
             except Exception as e:
                 print('best_models generation Failed!', e)
+
+            try:
+                today_data = pre.get_raw_data(pre.data_io)
+                len_data = len(today_data)
+                for i in range(2, -1, -1):
+                    today_data = pre.get_raw_data(pre.data_io)[0:len_data-i]
+                    best_comb_df = pd.read_csv(best_parameter_output_io)
+                    res_list, average_res = gen_prediction(today_data, best_comb_df)
+                print('Data fitting Success!')
+            except Exception as e:
+                print('Data fitting Failed!', e)
             print('Model Generation Finished!')
 
         except Exception as e:
@@ -88,7 +99,7 @@ if __name__ == '__main__':
             today_data = pre.get_raw_data(pre.data_io)
             best_comb_df = pd.read_csv(best_parameter_output_io)
             res_list, average_res = gen_prediction(today_data, best_comb_df)
-            print('Prediction Generation Success！result:{}, by{}'.format(average_res, res_list))
+            print('Prediction Generation Success!')
         except Exception as e:
             print('Prediction Generation Failed!', e)
 
@@ -111,6 +122,17 @@ if __name__ == '__main__':
     elif TYPE == 4:
         # CLEAR ALL
         try:
+            # COPY
+            new_folder = backup_io + today_str
+            if not os.path.exists(new_folder):
+                os.makedirs(new_folder)
+            files = os.listdir(model_step1_io)
+            for f in files:
+                shutil.copy(model_step1_io + '/' + f, new_folder + '/' + f)
+            shutil.copy(best_parameter_output_io, new_folder + '/best_parameter_res.csv')
+            shutil.copy(log_io, new_folder + '/res.csv')
+            print('COPY ALL Success!')
+            # DELETE
             for i in filepaths:
                 filepath = i
                 if not os.path.exists(filepath):
@@ -118,18 +140,28 @@ if __name__ == '__main__':
                 else:
                     shutil.rmtree(filepath)
                     os.mkdir(filepath)
-            print('CLEAR ALL Success!')
+            print('DELETE ALL Success!')
         except Exception as e:
             print('CLEAR ALL Failed!', e)
 
     elif TYPE == 5:
         # SEND WECHAT
-        # try:
-        # wx_warning()
-        loop_monitor()
-        # print('CLEAR ALL Success!')
-        # except Exception as e:
-        #     print('CLEAR ALL Failed!', e)
-
+        try:
+            wx_warning()
+            print('SEND WECHAT Success!')
+        except Exception as e:
+            print('SEND WECHAT Failed!', e)
     else:
         print('TYPE error')
+
+
+# if __name__ == '__main__':
+    # # UPDATE_PREDICTION
+    # run_main(3)
+    # run_main(2)
+    # run_main(5)
+    #
+    # # UPDATE_MODEL
+    # run_main(4)
+    # run_main(1)
+    # run_main(2)

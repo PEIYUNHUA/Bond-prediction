@@ -14,6 +14,9 @@ model_step1_output_io = './output/models/best-model'
 filepaths = ['./res/step1/', './res/step2/', './img/step1/', './img/step2/', './output/models']
 log_io = './output/result/res.csv'
 
+
+backup_io = './backups/'
+model_step1_io = './output/models'
 # ORIGINAL FEATURES
 #     CHN1, CHN3, CHN5, CHN10,
 #     USA1, USA3, USA5, USA10,
