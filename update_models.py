@@ -7,7 +7,6 @@ from main import *
 # TYPE 5 SEND WECHAT
 
 if __name__ == '__main__':
-    # # UPDATE_MODEL
+    # UPDATE_MODEL
     run_main(4)
     run_main(1)
-    run_main(2)

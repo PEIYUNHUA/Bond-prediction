@@ -41,7 +41,13 @@ def data_analysis():
 					new_df.loc[x - 2][y] = None
 					new_df.loc[x - 1][y] = None
 					new_df.loc[x + i][y] = None
-					i += 1
+					if x != df_length:
+						i += 1
+					if x + i == df_length:
+						new_df.loc[x - 2][y] = None
+						new_df.loc[x - 1][y] = None
+						new_df.loc[x + i][y] = None
+						break
 	new_df['time'] = pd.to_datetime(new_df['time'], format='%Y/%m/%d %H:%M')
 	new_df.set_index(["time"], inplace=True)
 	new_df = new_df[~new_df.index.duplicated(keep='first')]
@@ -73,6 +79,10 @@ def data_analysis():
 
 
 def wx_warning():
+	# proxies = {
+	# 	'http': 'http://localhost:15236',
+	# 	'https': 'http://localhost:15236'  # https -> http
+	# }
 	res_today_time, res_today_pre, res_today_real, res_next_day_pre, new_df, res_text = data_analysis()
 	webhook = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=51b43769-5e3b-46e5-812a-c2ad2775b779" # webhook地址
 	header = {
@@ -89,9 +99,35 @@ def wx_warning():
 				'下一个交易日预测值（趋势结果优先）:' + str(res_next_day_pre)
 		}
 	}
+	# resp = requests.post(webhook, headers=header, data=json.dumps(body), proxies=proxies)
 	resp = requests.post(webhook, headers=header, data=json.dumps(body))
+
+	# resp = requests.post(webhook, headers=header, data=json.dumps(body), verify=False)
+
 	# loop_monitor()
 
 # def loop_monitor():
 # 	t = Timer(5, wx_warning)
 # 	t.start()
+
+
+def data2dic():
+	res_today_time, res_today_pre, res_today_real, res_next_day_pre, new_df, res_text = data_analysis()
+	send_df = new_df.reset_index()
+	send_df['pre'] = send_df['pre'].fillna(send_df.loc[0]['real'])
+	send_df['date'] = send_df['time'].apply(lambda x: str(x)[0:10])
+	send_df['diff'] = send_df['pre'] - send_df['real']
+	send_df['diff'] = send_df['diff'].astype(float).apply(lambda x: '%.4f' % x)
+	send_df['pre'] = send_df['pre'].astype(float).apply(lambda x: '%.4f' % x)
+	send_df['real'] = send_df['real'].astype(float).apply(lambda x: '%.4f' % x)
+	_date = send_df['date'].to_list()
+	_pre = send_df['pre'].to_list()
+	_real = send_df['real'].to_list()
+	_diff = send_df['diff'].to_list()
+	res_dic = {
+		'date': _date,
+		'real': _real,
+		'pre': _pre,
+		'diff': _diff
+	}
+	return res_dic

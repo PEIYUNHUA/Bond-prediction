@@ -1,7 +1,5 @@
 import time
 
-import matplotlib.pyplot as plt
-
 import pre_processing as pre
 import feature_processing as feature
 import para_processing as para
@@ -78,6 +76,7 @@ def run_main(n):
             except Exception as e:
                 print('best_models generation Failed!', e)
 
+            # REFINE RESULT
             try:
                 today_data = pre.get_raw_data(pre.data_io)
                 len_data = len(today_data)
