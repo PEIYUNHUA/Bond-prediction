@@ -14,7 +14,7 @@ def gen_models(raw_data, best_model_df):
         data = (data.loc[data['date'].dt.year >= start_year]).reset_index().drop(columns='index')
         data_len = int(len(data)*0.8)
         train_data = data[:data_len]
-        test_data = data[len(data)-data_len:]
+        test_data = data[data_len:]
         train_model_savings(i, input_size, train_data, test_data, epochs, learning_rate)
 
 
@@ -33,15 +33,11 @@ def gen_prediction(today_data, best_comb_df):
         model.load_state_dict(torch.load(model_dir))
         model.eval()
 
-        # data = raw_data[['date', 'CHN10', 'GOVBOND', 'GKBOND']]
-        # data = (data.loc[data['date'].dt.year >= start_year]).reset_index().drop(columns='index')
-
         data = today_data[best_lists]
         data = (data.loc[data['date'].dt.year >= start_year]).reset_index().drop(columns='index')
 
-        # data = data.tail(1)
         x_feed = data.drop('date', axis=1)
-        x_feed = x_feed.drop('CHN10', axis=1)
+        x_feed = x_feed.drop(target, axis=1)
 
         # means and fit
         sc = StandardScaler()
@@ -55,7 +51,7 @@ def gen_prediction(today_data, best_comb_df):
         fin_res = round((fin_pre[-1].astype('float').tolist())[0], 4)
         res_list.append(fin_res)
     latest_date = data.iloc[-1]['date']
-    latest_real = data.iloc[-1]['CHN10']
+    latest_real = data.iloc[-1][target]
     average_res = np.mean(res_list)
     average_res = round(average_res, 4)
     res_list.append('avg')

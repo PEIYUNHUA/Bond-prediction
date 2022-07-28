@@ -21,11 +21,10 @@ def search_para(raw_data, best_comb_df):
                 data = (data.loc[data['date'].dt.year >= start_year]).reset_index().drop(columns='index')
                 data_len = int(len(data) * 0.8)
                 train_data = data[:data_len]
-                test_data = data[len(data) - data_len:]
+                test_data = data[data_len:]
                 y_test, y_test_predict, eva_mae, eva_mpea, eva_r2 = train_model(input_size, train_data, test_data, epochs, learning_rate)
                 endtime = time.time()
                 timecost = endtime-starttime
-                # print('r2:{} mae:{} mpea:{} timecost:{}'.format(round(eva_r2, 4), round(eva_mae, 4), round(eva_mpea, 4), round(timecost, 4)))
 
                 plt.figure(figsize=(10, 6)) #plotting
                 plt.axvline(x=230, c='r', linestyle='--')
@@ -36,9 +35,6 @@ def search_para(raw_data, best_comb_df):
                 plt.savefig('./img/step2/comb{}-epochs{}-learning_rate{}.png'.format(best_lists, x, y))
                 plt.close()
 
-                # par_res_df = pd.DataFrame(
-                #     columns=['feature_comb', 'r2', 'mae', 'mpea', 'timecost', 'epochs', 'learning_rate',
-                #              'y_test_predict'])
                 par_res_df.loc[count, 'feature_comb'] = best_lists
                 par_res_df.loc[count, 'r2'] = round(eva_r2, 4)
                 par_res_df.loc[count, 'mae'] = round(eva_mae, 4)

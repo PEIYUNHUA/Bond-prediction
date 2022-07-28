@@ -1,7 +1,6 @@
 import requests
 import json
 import datetime
-from threading import Timer
 import pandas as pd
 from configs.CONFIGS import *
 
@@ -20,7 +19,7 @@ def data_analysis():
 				break
 			else:
 				avg_list.append(each)
-		for y in range(10, 16):
+		for y in range(0, 16):
 			each = df.loc[x][y]
 			if each == 'predicting_date':
 				time_list.append(df.loc[x][y + 1])
@@ -54,6 +53,8 @@ def data_analysis():
 	new_df = new_df.astype(float)
 	new_df.iloc[:, 0:10] = new_df.iloc[:, 0:10].where(
 		new_df.iloc[:, 0:10].rank(axis=1, ascending=False, method='dense') > 1)
+	new_df.iloc[:, 0:10] = new_df.iloc[:, 0:10].where(
+		new_df.iloc[:, 0:10].rank(axis=1, ascending=True, method='dense') > 1)
 	new_df['pre'] = new_df.iloc[:, 0:10].mean(axis=1)
 	res_today_pre = round(new_df.tail(n=2).head(n=1)['pre'][0], 4)
 	res_today_real = round(new_df.tail(n=1)['real'][0], 4)
@@ -79,12 +80,8 @@ def data_analysis():
 
 
 def wx_warning():
-	# proxies = {
-	# 	'http': 'http://localhost:15236',
-	# 	'https': 'http://localhost:15236'  # https -> http
-	# }
 	res_today_time, res_today_pre, res_today_real, res_next_day_pre, new_df, res_text = data_analysis()
-	webhook = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=51b43769-5e3b-46e5-812a-c2ad2775b779" # webhook地址
+	webhook = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=XXXXXXXXXXXXXXXXXXXXXXXXXX" # webhook地址
 	header = {
 		'Content-Type': "application/json"
 	}
@@ -102,13 +99,6 @@ def wx_warning():
 	# resp = requests.post(webhook, headers=header, data=json.dumps(body), proxies=proxies)
 	resp = requests.post(webhook, headers=header, data=json.dumps(body))
 
-	# resp = requests.post(webhook, headers=header, data=json.dumps(body), verify=False)
-
-	# loop_monitor()
-
-# def loop_monitor():
-# 	t = Timer(5, wx_warning)
-# 	t.start()
 
 
 def data2dic():

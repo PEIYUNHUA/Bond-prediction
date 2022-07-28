@@ -9,4 +9,5 @@ from main import *
 if __name__ == '__main__':
     # UPDATE_MODEL
     run_main(4)
+    run_main(3)
     run_main(1)

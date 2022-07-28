@@ -14,7 +14,6 @@ def get_raw_data(data_io):
     col_list = raw_data.columns.values[1:raw_data.shape[1]]
     for i in col_list:
         raw_data[i] = raw_data[i].fillna(raw_data[i].interpolate())
-    # add ma & boll
     ma_boll_data = get_ma_boll(ma_boll_list, raw_data)
     return raw_data
 

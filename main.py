@@ -39,6 +39,8 @@ def run_main(n):
             # LOAD DATA
             try:
                 raw_data = pre.get_raw_data(pre.data_io)
+                raw_data = raw_data.fillna(method='ffill')
+                raw_data = raw_data.fillna(method='bfill')
                 print('Data loading Success!')
             except Exception as e:
                 print('Data loading Failed!', e)
@@ -54,7 +56,7 @@ def run_main(n):
             # COMB SELECT
             try:
                 feature_comb_df = feature.search_comb(raw_data, feature_comb_df)
-                best_comb_df = evaluation.evaluations_comb(feature_comb_df)
+                best_comb_df = evaluation.get_evaluations(feature_comb_df)
                 best_comb_df.to_csv(best_feature_output_io)
                 print('best_feature_res.csv generation Success!')
             except Exception as e:
@@ -63,7 +65,7 @@ def run_main(n):
             # PARAMETER SELECT
             try:
                 par_res_df = para.search_para(raw_data, best_comb_df)
-                best_comb_df = evaluation.evaluations_para(par_res_df)
+                best_comb_df = evaluation.get_evaluations(par_res_df)
                 best_comb_df.to_csv(best_parameter_output_io)
                 print('best_parameter_res.csv generation Success!')
             except Exception as e:
